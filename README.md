@@ -5,7 +5,7 @@ Paul Sun, Jeff Ye, Joy Zhang, Alaia Chen
 
 ### Domain of interest
 **Why are you interested in this field/domain?**  
-We are interested in how COVID-19 affects of U.S policies and infrastructures in the United States.
+Due the huge impacts of COVID-19, many people in the United States has been through a lot of changes and difficulties. Every time talking to our friends, "Keep safe" has been the best wishes. After talking as a group, we are interested in how COVID-19 affects of U.S policies and infrastructures in the United States.
 
 **What other examples of data driven project have you found related to this domain (share at least 3)?**  
 [Covid in the U.S.: Latest Map and Case Count](https://www.nytimes.com/interactive/2020/us/coronavirus-us-cases.html)  
