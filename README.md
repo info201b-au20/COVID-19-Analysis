@@ -19,7 +19,7 @@ We are interested in how COVID-19 affects of U.S policies and infrastructures in
 
 ### Finding Data
 #### Data 1: United States DATA
-**Where did you download the data (e.g., a web URL)?**
+**Where did you download the data (e.g., a web URL)?**  
 [https://www.kaggle.com/diogoalex/covid19-stats-and-trends](https://www.kaggle.com/diogoalex/covid19-stats-and-trends)
 
 **How was the data collected or generated? Make sure to explain who collected the data (not necessarily the same people that host the data), and who or what the data is about?**  
@@ -37,7 +37,7 @@ There are 19 columns in the data set(COVID-19) , each column shows a specific fe
 3. What is the relationship between confirmed cases and infrastructures in the United States since February?
 
 #### Data 2: COVID-19 STATES DATA
-**Where did you download the data (e.g., a web URL)?**
+**Where did you download the data (e.g., a web URL)?**  
 [https://www.kaggle.com/sudalairajkumar/covid19-in-usa?select=us_states_covid19_daily.csv](https://www.kaggle.com/sudalairajkumar/covid19-in-usa?select=us_states_covid19_daily.csv)
 
 **How was the data collected or generated? Make sure to explain who collected the data (not necessarily the same people that host the data), and who or what the data is about?**  
@@ -55,7 +55,7 @@ There are 54 features in the dataset - us_states_covid19_daily.
 3. Within the positive COVID-19 cases, the percentage of people who recovered and died from COVID-19.
 
 #### Data 3: Policy in Each State
-**Where did you download the data (e.g., a web URL)?**
+**Where did you download the data (e.g., a web URL)?**  
 [https://catalog.data.gov/dataset/covid-19-state-and-county-policy-orders](https://catalog.data.gov/dataset/covid-19-state-and-county-policy-orders)
 
 **How was the data collected or generated? Make sure to explain who collected the data (not necessarily the same people that host the data), and who or what the data is about?**  
