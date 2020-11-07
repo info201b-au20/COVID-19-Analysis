@@ -1,6 +1,10 @@
 
 data <- read.csv("dataset\\us_states_covid19_daily.csv", stringsAsFactors = F)
 library(tidyverse)
+data$positive[is.na(data$positive)] <- 0
+data$death[is.na(data$death)] <- 0
+data$total[is.na(data$total)] <- 0
+data$hospitalizedCurrently[is.na(data$hospitalizedCurrently)] <- 0
 
 # 1. The ratio of positive to totalTestResults in each state.
 state_positive_totalResults <- data %>% 
@@ -15,6 +19,7 @@ state_death_totalResults <- data %>%
   group_by(state) %>% 
   summarise(ratio = death / total) %>% 
   select(state, ratio)
+View(state_death_totalResults)
 
 # 3. Daily increase in positive cases in each state.
 state_daily_positive_increase <- data %>% 
@@ -30,4 +35,4 @@ state_daily_death_increase <- data %>%
 ratio_hospitalized_total <- data %>% 
   group_by(date, state) %>% 
   summarise(ratio = hospitalizedCurrently / positive)
-
+ratio_hospitalized_total$ratio[is.na(ratio_hospitalized_total$ratio)] <- 0
