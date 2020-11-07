@@ -3,26 +3,15 @@ title: "Introduction"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+## Introduction
 
-## R Markdown
+Due the huge impacts of COVID-19, many people in the United States has been through a lot of changes and difficulties. Every time talking to our friends, "Keep safe" has been the best wishes. Our group is interested in how U.S policies related to COVID-19 affect the COVID-19 status in the United States. After finding three sources of date, we decided to analysis the [daily state data set](https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/us_states_covid19_daily.csv) and then combine with the [state policy data](https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/state_policy_updates_20201018_1346.csv) to figure out our theme.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Summary
+Write a summary paragraph that includes information calculated by your summary information function
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## Table
+Render your table and describe pertinent observations found in it
 
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Chart
+Describe the purpose of each chart (e.g., "this chart was intended to show the relationship between..."), render each chart, and describe pertinent observations found in each chart
