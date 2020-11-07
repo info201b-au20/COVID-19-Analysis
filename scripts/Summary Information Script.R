@@ -1,4 +1,5 @@
-data <- read.csv("us_states_covid19_daily.csv", stringsAsFactors = F)
+
+data <- read.csv("dataset\\us_states_covid19_daily.csv", stringsAsFactors = F)
 library(tidyverse)
 
 # 1. The ratio of positive to totalTestResults in each state.
@@ -29,3 +30,4 @@ state_daily_death_increase <- data %>%
 ratio_hospitalized_total <- data %>% 
   group_by(date, state) %>% 
   summarise(ratio = hospitalizedCurrently / positive)
+
