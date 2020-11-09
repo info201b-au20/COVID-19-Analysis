@@ -1,5 +1,5 @@
 
-data <- read.csv("dataset\\us_states_covid19_daily.csv", stringsAsFactors = F)
+data <- read.csv("us_states_covid19_daily.csv", stringsAsFactors = F)
 library(tidyverse)
 data$positive[is.na(data$positive)] <- 0
 data$death[is.na(data$death)] <- 0
