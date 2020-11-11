@@ -6,8 +6,6 @@ output: html_document
 library("knitr")
 knitr::opts_knit$set(root.dir = './scripts')
 ```
-[Website link](https://info201b-au20.github.io/COVID-19-Analysis/)  
-
 ## Introduction
 Due the huge impacts of COVID-19, many people in the United States has been through a lot of changes and difficulties. Every time talking to our friends, "Keep safe" has been the best wishes. Our group is interested in how U.S policies related to COVID-19 affects the COVID-19 status in the United States. After finding three sources of date, we decided to analysis the [daily state data set](https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/us_states_covid19_daily.csv) and then combine with the [state policy data](https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/state_policy_updates_20201018_1346.csv) to figure out our theme.
 
