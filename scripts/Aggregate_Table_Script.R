@@ -30,22 +30,22 @@ national_statistics <- mutate(
   national_current_hospitalized
 )
 
-# calculate daily national new cases and add it to national_statistics
+# 4. calculate daily national new cases and add it to national_statistics
 national_statistics <- mutate(
   national_statistics,
   national_new_cases =  national_total_cases - lag(national_total_cases, 1, default = 0)
 )
 
-# calculate daily national new deaths add it to national_statistics
+# 5. calculate daily national new deaths add it to national_statistics
 national_statistics <- mutate(
   national_statistics,
   national_new_deaths =  national_total_deaths - lag(national_total_deaths, 1, default = 0)
 )
 
-# calculate daily national change of hospitalized people add it to national_statistics
+# 6. calculate daily national change of hospitalized people add it to national_statistics
 national_statistics <- mutate(
   national_statistics,
   national_new_hospitalized =  national_current_hospitalized - lag(national_current_hospitalized, 1, default = 0)
 )
 # View national overall statistics 
-View(national_statistics)
+# View(national_statistics)

@@ -6,7 +6,7 @@ source("Aggregate_Table_Script.R")
 
 national_statistics$date <-  as.Date(as.character.Date(national_statistics$date), "%Y%m%d")
 
-ggplot(data = national_statistics, mapping=aes(x = date, y = national_new_cases)) +
+daily_increase <- ggplot(data = national_statistics, mapping=aes(x = date, y = national_new_cases)) +
   geom_point() +
   geom_line() +
   ggtitle("Daily U.S. COVID-19 Cases Increase ") +

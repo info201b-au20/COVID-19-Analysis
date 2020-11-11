@@ -1,17 +1,68 @@
 ---
-title: "Introduction"
+title: "COVID-19 Report"
 output: html_document
 ---
+```{r, setup, include=FALSE}
+library("knitr")
+knitr::opts_knit$set(root.dir = './scripts')
+```
 
 ## Introduction
-
-Due the huge impacts of COVID-19, many people in the United States has been through a lot of changes and difficulties. Every time talking to our friends, "Keep safe" has been the best wishes. Our group is interested in how U.S policies related to COVID-19 affect the COVID-19 status in the United States. After finding three sources of date, we decided to analysis the [daily state data set](https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/us_states_covid19_daily.csv) and then combine with the [state policy data](https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/state_policy_updates_20201018_1346.csv) to figure out our theme.
+Due the huge impacts of COVID-19, many people in the United States has been through a lot of changes and difficulties. Every time talking to our friends, "Keep safe" has been the best wishes. Our group is interested in how U.S policies related to COVID-19 affects the COVID-19 status in the United States. After finding three sources of date, we decided to analysis the [daily state data set](https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/us_states_covid19_daily.csv) and then combine with the [state policy data](https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/state_policy_updates_20201018_1346.csv) to figure out our theme.
 
 ## Summary
-Write a summary paragraph that includes information calculated by your summary information function
+```{r, include=FALSE}
+source("Summary_Information_Script.R")
+```
+In the summary section, we are interested in state and date related statistics, so our group decided to calculate as state or date. First, we want to know both the ratio of cumulative positive cases and ratio of cumulative death cases out of the total test number in each state to find out each state's condition until the most recent date. Moreover, the number of both daily increase cases and daily increase deaths in each state could tell us the trend and threat of COVID-19 status in each state. Last but not least, daily ratio of hospitalized currently to positive cases in each state could some how show the medical resources in each state. In order to keep clarity, we will show the summary section in two different tables in the following section.
+
+##### Table 1: Ratio of cumulative positive cases in each state & Ratio of cumulative death cases in each state
+```{r, echo=FALSE}
+state_ratio <- full_join(state_positive_totalResults, state_death_totalResults)
+kable(state_ratio)
+```
+##### Table 2: Daily increase cases in each state & Daily increase deaths in each state & Daily ratio of hospitalized currently to positive cases in each state
+(Since the second table will be 11634 rows, we will only show part of the date)
+```{r, echo=FALSE}
+daily_state <- full_join(state_daily_positive_increase, state_daily_death_increase)
+daily_state <- full_join(daily_state, ratio_hospitalized_total)
+daily_state
+```
 
 ## Table
-Render your table and describe pertinent observations found in it
+```{r, include=FALSE}
+source("Aggregate_Table_Script.R")
+```
+In the table, we are interested in the national level of statistic related to COVID-19. Each row will be represent one day. For the columns, we calculate the national total cases, national total deaths and national current hospitalized number. Moreover, we want to know the new increase of each data since the previous data are cumulative. Thus, we add three more columns to calculate the new increases of national cases, national deaths and national current hospitalized number.  
+(Since the table will be 250 rows, we will only show part of the date)
+```{r, echo=FALSE}
+national_statistics
+```
 
 ## Chart
-Describe the purpose of each chart (e.g., "this chart was intended to show the relationship between..."), render each chart, and describe pertinent observations found in each chart
+#### Chart 1: Ratio of confirmed cases in each state
+Since each state has different population, we calculate the ratio of confirmed cases in each state to get better understanding of the state condition about COVID-19. In the plot below, we could see Arizona has the highest confirmed ratio which means the COVID-19 condition in Arizona is most serious.
+```{r, include=FALSE}
+source("State vs Positive Test Results.R")
+```
+```{r, echo=FALSE}
+state_positive_ratio
+```
+
+#### Chart 2: Daily increase of natinal COVID-19 cases
+In order to see when COVID-19 in national level are most serious, we plot the daily increase cases. In the plot below, we can see the highest increase of COVID-19 is in July. Also, before April, COVID-19 seems not to be a problem in the United States since the daily increase before April are relatively small.
+```{r, include=FALSE}
+source("National Confirmed Cases vs Date.R")
+```
+```{r, echo=FALSE}
+daily_increase
+```
+
+#### Chart 3: Daily increase of natinal COVID-19 deaths
+In order to see when COVID-19 in national level becomes a threat, we plot the daily deaths. In the plot below, we can see the highest increase of COVID-19 is in both April and May. This plot is different then the **chart 2** which shows that, in the April, even though the increases of daily COVID-19 case are not the highest, but the increases of COVID-19 deaths are really high.
+```{r, include=FALSE}
+source("National Death vs Date.R")
+```
+```{r, echo=FALSE}
+daily_increase_death
+```
