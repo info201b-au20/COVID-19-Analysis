@@ -10,11 +10,53 @@ data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
 data_cases2 <- read.csv("../dataset/us_states_covid19_daily.csv")
 type <- c("positive", "totalTestResults", "hospitalized currently", 
           "recovered", "death")
-
+colnames1 <- colnames(national_statistics)
+select_columns <- colnames1[colnames1 != "date"]
+###############################################################################
 # Introduction
 intro <- tabPanel()
+###############################################################################
 # Interactive page one
-page_one <- tabPanel()
+
+y_input_1 <- selectInput(
+  inputId = "y_input",
+  label = "Y variable",
+  choices = select_columns
+)
+
+color_input_1 <- selectInput(
+  inputId = "color_input",
+  label = "Color",
+  choices = list("Red" = "red", "Blue" = "blue", "Green" = "green")
+)
+
+# Create a variable `size_input` as a `sliderInput()` that allows users to
+# select a point size to use in the graph.
+
+size_input_1 <- sliderInput(
+  inputId = "size_input",
+  label = "Size of point", min = 1, max = 10, value = 2
+)
+
+scatter_main_1 <- mainPanel(
+  plotlyOutput("scatter1")
+)
+
+scatter_sidepanel_1 <- sidebarPanel(
+  y_input_1,
+  color_input_1,
+  size_input_1
+)
+
+page_one <- tabPanel(
+  title = "National COVID-19",
+  titlePanel("National COVID-19 Trend"),
+  sidebarLayout(
+    scatter_sidepanel_1,
+    scatter_main_1
+)
+)
+###############################################################################
 # Interactive page two
 scatter_sidebar_2 <- sidebarPanel(
   selectInput(
@@ -42,14 +84,16 @@ page_two <- tabPanel(
     scatter_main_2
   )
 )
-
+###############################################################################
 # Interactive page three
 page_three <- tabPanel()
+
+###############################################################################
 # Summary
 last <- tabPanel()
 
 ui <- navbarPage(
-  #includeCSS("style.css"),
+  includeCSS("style.css"),
   title = "COVID-19",
   intro,
   page_one,

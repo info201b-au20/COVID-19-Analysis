@@ -9,13 +9,37 @@ raw_data2 <- read.csv("../dataset/state_policy_updates_20201018_1346.csv",
                       stringsAsFactors = F)
 data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
 data_cases2 <- read.csv("../dataset/us_states_covid19_daily.csv")
+source("../scripts/Aggregate_Table_Script.R")
+###############################################################################
+# Page one variables
 
+
+
+###############################################################################
 # Page two variables
 data2$date <- as.Date(data2$date)
+
 
 server <- function(input, output) {
   # Introduction
   # Page one
+  national_statistics$date <-  as.Date(as.character.Date(national_statistics$date), "%Y%m%d")
+  
+    output$scatter1 <- renderPlotly({
+      plot_national_COVID <- ggplot(data = national_statistics) +
+        geom_point(
+          mapping = aes_string(x = national_statistics$date, y = input$y_input_1),
+          color = input$color_input,
+          size = input$size_input
+        ) +
+        geom_line(mapping = aes_string(x = national_statistics$date, y = input$y_input_1)) +
+        ggtitle("Trend Over Time") +
+        xlab("Date")
+      ggplotly(plot_national_COVID)
+    })
+  
+  
+  
   # Page two
   output$scatter2 <- renderPlotly({
     policy_per_month2 <- data2 %>% 
@@ -45,4 +69,3 @@ server <- function(input, output) {
 }
   # Page three
   # Summary
-}
