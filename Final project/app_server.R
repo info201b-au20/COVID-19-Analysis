@@ -4,6 +4,10 @@ library(tidyverse)
 library("ggplot2")
 library("shiny")
 library(plotly)
+library("maps")
+library("mapproj")
+library("RColorBrewer")
+library("leaflet") 
 
 raw_data2 <- read.csv("../dataset/state_policy_updates_20201018_1346.csv", 
                       stringsAsFactors = F)
@@ -66,6 +70,70 @@ server <- function(input, output) {
       labs(x = "Date", y = "Cases", title = "COVID-19 Cases")
     ggplotly(plot_cases2)
   })
-}
-  # Page three
+
+######## Page three ##################################################
+### data ############
+source("../scripts/Summary Information Script.R")
+
+case_ratio <- state_positive_totalResults
+death_ratio <- state_death_totalResults
+
+case_death_data <- case_ratio %>% 
+  rename("case_ratio" = ratio) %>%
+  left_join(death_ratio, by = "state") %>% 
+  rename("death_ratio" = ratio )
+
+m_data <- case_death_data
+m_data$state <- state.name[match(case_death_data$state, state.abb)]
+m_data$state[is.na(case_death_data$state)] <- "district of columbia"
+m_data <- drop_na(m_data)
+m_data <- mutate(m_data, names = tolower(state))
+
+
+states_data <- map_data("state") %>%
+  rename(state = region) %>%
+  left_join(m_data, by="state")
+
+mapStates = map("state", fill = TRUE, plot = FALSE)
+mapStates$names[60] <-  "washington"
+mapStates$names[21] <- "massachusetts"
+mapStates$names[55] <- "virginia"
+mapStates$names[39] <- "north carolina"
+mapStates$names[35] <- "new york"
+mapStates$names[23] <- "michigan"
+mapStates$names[24] <- "michigan"
+mapStates$case_ratio <- m_data$case_ratio[match(mapStates$names, m_data$names)]
+mapStates$death_ratio <- m_data$death_ratio[match(mapStates$names, m_data$names)]
+
+################# create map #############################
+
+output$map_id <- renderLeaflet({
+  bins <- c(0, 0.001, 0.01, 0.1, 1)
+  pal <- colorBin("YlOrRd", domain = m_data[[input$ratio_id]] , bins = bins)
+  labels <- sprintf(
+    "<strong>%s</strong><br/>%g",
+    mapStates$names, mapStates[[input$ratio_id]]
+  ) %>% lapply(htmltools::HTML)
+  
+  leaflet(data = mapStates) %>% 
+    addPolygons(
+      fillColor = ~pal(mapStates[[input$ratio_id]]),
+      weight = 3,
+      opacity = 1,
+      color = "white",
+      dashArray = "2",
+      fillOpacity = 0.7,
+      highlight = highlightOptions(
+        weight = 5,
+        color = "#666",
+        fillOpacity = 0.7,
+        bringToFront = TRUE),
+      label = labels
+    )
+})
+
+##########################################################
+
   # Summary
+
+}
