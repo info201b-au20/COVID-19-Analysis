@@ -9,11 +9,10 @@ library("mapproj")
 library("RColorBrewer")
 library("leaflet") 
 
-raw_data2 <- read.csv("../dataset/state_policy_updates_20201018_1346.csv", 
-                      stringsAsFactors = F)
+raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
 data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
-data_cases2 <- read.csv("../dataset/us_states_covid19_daily.csv")
-source("../scripts/Aggregate_Table_Script.R")
+data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
+national_statistics <- source("Aggregate_Table_Script.R")
 ###############################################################################
 # Page one variables
 
@@ -61,11 +60,15 @@ server <- function(input, output) {
   })
   
   output$scatter_cases2 <- renderPlotly({
+    type <- c("positive", "totalTestResults", "hospitalized currently", 
+              "recovered", "death")
+    types <- c("positive", "totalTestResults", "hospitalizedCurrently", 
+              "recovered", "death")
     data_cases_state_2 <- data_cases2 %>% 
       filter(state == input$state2)
     plot_cases2 <- ggplot(data_cases_state_2) +
       geom_point(
-        mapping = aes_string(x = data_cases_state_2$date, y = input$cases)
+        mapping = aes_string(x = data_cases_state_2$date, y = types[input$cases])
       ) +
       labs(x = "Date", y = "Cases", title = "COVID-19 Cases")
     ggplotly(plot_cases2)
@@ -73,15 +76,15 @@ server <- function(input, output) {
 
 ######## Page three ##################################################
 ### data ############
-source("../scripts/Summary Information Script.R")
+source("Summary_Information_Script.R")
 
 case_ratio <- state_positive_totalResults
 death_ratio <- state_death_totalResults
 
 case_death_data <- case_ratio %>% 
-  rename("case_ratio" = ratio) %>%
+  rename("case_ratio" = positive_ratio) %>%
   left_join(death_ratio, by = "state") %>% 
-  rename("death_ratio" = ratio )
+  rename("death_ratio" = death_ratio)
 
 m_data <- case_death_data
 m_data$state <- state.name[match(case_death_data$state, state.abb)]
