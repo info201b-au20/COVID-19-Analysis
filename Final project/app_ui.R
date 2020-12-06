@@ -13,9 +13,6 @@ data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
 data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
 type <- c("positive", "totalTestResults", "hospitalized currently", 
           "recovered", "death")
-national_statistics <- source("Aggregate_Table_Script.R")
-colnames1 <- colnames(national_statistics)
-select_columns <- colnames1[colnames1 != "date"]
 ###############################################################################
 # Introduction
 intro <- tabPanel(
@@ -23,6 +20,9 @@ intro <- tabPanel(
 )
 ###############################################################################
 # Interactive page one
+source("Aggregate_Table_Script.R")
+colnames1 <- colnames(national_statistics)
+select_columns <- colnames1[colnames1 != "date"]
 
 y_input_1 <- selectInput(
   inputId = "y_input",
