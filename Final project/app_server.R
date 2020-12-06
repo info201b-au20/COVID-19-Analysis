@@ -1,3 +1,5 @@
+# Load packages
+
 library("tidyverse")
 library("ggplot2")
 library("shiny")
@@ -5,63 +7,86 @@ library("plotly")
 library("maps")
 library("mapproj")
 library("RColorBrewer")
-library("leaflet") 
+library("leaflet")
+
+# Create a server for the Shiny app
 
 server <- function(input, output) {
-##### Page one ################################################################
+  ##### Page one ##############################################################
   source("Aggregate_Table_Script.R")
-  choose_1 <- list("National total cases" = "national_total_cases",
-                   "National total deaths" = "national_total_deaths",
-                   "National current hospitalized" = 
-                     "national_current_hospitalized",
-                   "National new cases" = "national_new_cases",
-                   "National new Deaths" = "national_new_deaths",
-                   "National new Hospitalized" = "national_new_hospitalized")
-  national_statistics$date <- as.Date(as.character.Date(national_statistics$date), "%Y%m%d")
   
-    output$scatter1 <- renderPlotly({
-      plot_national_COVID <- ggplot(data = national_statistics) +
-        geom_point(
-          mapping = aes_string(x = national_statistics$date, 
-                               y = choose_1[[input$y_input]]),
-          color = input$color_input,
-          size = input$size_input
-        ) +
-        geom_line(mapping = aes_string(x = national_statistics$date, 
-                                       y = choose_1[[input$y_input]])) +
-        ggtitle("Trend Over Time") +
-        xlab("Date") + ylab(input$y_input)
-      ggplotly(plot_national_COVID)
-    })
+  # List the different choices
   
+  choose_1 <- list(
+    "National total cases" = "national_total_cases",
+    "National total deaths" = "national_total_deaths",
+    "National current hospitalized" =
+      "national_current_hospitalized",
+    "National new cases" = "national_new_cases",
+    "National new deaths" = "national_new_deaths",
+    "National new hospitalized" = "national_new_hospitalized"
+  )
   
+  # Change the date format to year/month/day
   
-#### Page two #################################################################
+  national_statistics$date <- as.Date(as.character.Date(
+    national_statistics$date
+  ), "%Y%m%d")
+
+  # Create the first scatter plot
+  
+  output$scatter1 <- renderPlotly({
+    plot_national_covid <- ggplot(data = national_statistics) +
+      geom_point(
+        mapping = aes_string(
+          x = national_statistics$date,
+          y = choose_1[[input$y_input]]
+        ),
+        color = input$color_input,
+        size = input$size_input
+      ) +
+      geom_line(mapping = aes_string(
+        x = national_statistics$date,
+        y = choose_1[[input$y_input]]
+      )) +
+      ggtitle("Trend Over Time") +
+      xlab("Date") +
+      ylab(input$y_input)
+    ggplotly(plot_national_covid)
+  })
+
+
+
+  #### Page two ###############################################################
   output$scatter2 <- renderPlotly({
     raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
     data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
     data2$date <- as.Date(data2$date)
-    policy_per_month2 <- data2 %>% 
-      filter(state_id == input$state2) %>% 
-      mutate(month = format(date, "%m")) %>% 
-      group_by(month) %>% 
+    policy_per_month2 <- data2 %>%
+      filter(state_id == input$state2) %>%
+      mutate(month = format(date, "%m")) %>%
+      group_by(month) %>%
       summarize(total = n())
     plot_policy_2 <- ggplot(policy_per_month2) +
       geom_point(
         mapping = aes(x = month, y = total)
       ) +
-      labs(x = "Month", y = "Number of Published Policies", title = 
-             "Published Policies Per Month Chart")
+      labs(
+        x = "Month", y = "Number of Published Policies", title =
+          "Published Policies Per Month Chart"
+      )
     ggplotly(plot_policy_2)
   })
 
   output$scatter_cases2 <- renderPlotly({
     data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
-    name <- list("Positive case" = "positive", 
-                 "Total Test Result" = "totalTestResults", 
-                 "Hospitalized currently" = "hospitalizedCurrently", 
-                 "Recovered case" = "recovered", "Death case" = "death")
-    data_cases_state_2 <- data_cases2 %>% 
+    name <- list(
+      "Positive case" = "positive",
+      "Total Test Result" = "totalTestResults",
+      "Hospitalized currently" = "hospitalizedCurrently",
+      "Recovered case" = "recovered", "Death case" = "death"
+    )
+    data_cases_state_2 <- data_cases2 %>%
       filter(state == input$state2)
     plot_cases2 <- ggplot(data_cases_state_2) +
       geom_point(
@@ -71,59 +96,66 @@ server <- function(input, output) {
     ggplotly(plot_cases2)
   })
 
-######## Page three ###########################################################
-### data ############
-source("Summary_Information_Script.R")
+  ######## Page three #########################################################
+  ### data ############
+  source("Summary_Information_Script.R")
 
-case_ratio <- state_positive_totalResults
-death_ratio <- state_death_totalResults
+  case_ratio <- state_positive_totalResults
+  death_ratio <- state_death_totalResults
 
-case_death_data <- case_ratio %>% 
-  rename("case_ratio" = positive_ratio) %>%
-  left_join(death_ratio, by = "state") %>% 
-  rename("death_ratio" = death_ratio)
+  case_death_data <- case_ratio %>%
+    rename("case_ratio" = positive_ratio) %>%
+    left_join(death_ratio, by = "state") %>%
+    rename("death_ratio" = death_ratio)
 
-m_data <- case_death_data
-m_data$state <- state.name[match(case_death_data$state, state.abb)]
-m_data$state[is.na(case_death_data$state)] <- "district of columbia"
-m_data <- drop_na(m_data)
-m_data <- mutate(m_data, names = tolower(state))
+  m_data <- case_death_data
+  m_data$state <- state.name[match(case_death_data$state, state.abb)]
+  m_data$state[is.na(case_death_data$state)] <- "district of columbia"
+  m_data <- drop_na(m_data)
+  m_data <- mutate(m_data, names = tolower(state))
 
-mapStates = map("state", fill = TRUE, plot = FALSE)
-mapStates$names[60] <-  "washington"
-mapStates$names[21] <- "massachusetts"
-mapStates$names[55] <- "virginia"
-mapStates$names[39] <- "north carolina"
-mapStates$names[35] <- "new york"
-mapStates$names[23] <- "michigan"
-mapStates$names[24] <- "michigan"
-mapStates$case_ratio <- m_data$case_ratio[match(mapStates$names, m_data$names)]
-mapStates$death_ratio <- m_data$death_ratio[match(mapStates$names, m_data$names)]
+  map_states <- map("state", fill = TRUE, plot = FALSE)
+  map_states$names[60] <- "washington"
+  map_states$names[21] <- "massachusetts"
+  map_states$names[55] <- "virginia"
+  map_states$names[39] <- "north carolina"
+  map_states$names[35] <- "new york"
+  map_states$names[23] <- "michigan"
+  map_states$names[24] <- "michigan"
+  map_states$case_ratio <- m_data$case_ratio[match(
+    map_states$names,
+    m_data$names
+  )]
+  map_states$death_ratio <- m_data$death_ratio[match(
+    map_states$names,
+    m_data$names
+  )]
 
-################# create map ##################################################
+  ################# create map ################################################
 
-output$map_id <- renderLeaflet({
-  bins <- c(0, 0.001, 0.01, 0.1, 1)
-  pal <- colorBin("YlOrRd", domain = m_data[[input$ratio_id]] , bins = bins)
-  labels <- sprintf(
-    "<strong>%s</strong><br/>%g",
-    mapStates$names, mapStates[[input$ratio_id]]
-  ) %>% lapply(htmltools::HTML)
-  
-  leaflet(data = mapStates) %>% 
-    addPolygons(
-      fillColor = ~pal(mapStates[[input$ratio_id]]),
-      weight = 3,
-      opacity = 1,
-      color = "white",
-      dashArray = "2",
-      fillOpacity = 0.7,
-      highlight = highlightOptions(
-        weight = 5,
-        color = "#666",
+  output$map_id <- renderLeaflet({
+    bins <- c(0, 0.001, 0.01, 0.1, 1)
+    pal <- colorBin("YlOrRd", domain = m_data[[input$ratio_id]], bins = bins)
+    labels <- sprintf(
+      "<strong>%s</strong><br/>%g",
+      map_states$names, map_states[[input$ratio_id]]
+    ) %>% lapply(htmltools::HTML)
+
+    leaflet(data = map_states) %>%
+      addPolygons(
+        fillColor = ~ pal(map_states[[input$ratio_id]]),
+        weight = 3,
+        opacity = 1,
+        color = "white",
+        dashArray = "2",
         fillOpacity = 0.7,
-        bringToFront = TRUE),
-      label = labels
-    )
+        highlight = highlightOptions(
+          weight = 5,
+          color = "#666",
+          fillOpacity = 0.7,
+          bringToFront = TRUE
+        ),
+        label = labels
+      )
   })
 }
