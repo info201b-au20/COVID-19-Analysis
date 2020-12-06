@@ -1,9 +1,7 @@
-# server.R
-library(dplyr)
-library(tidyverse)
+library("tidyverse")
 library("ggplot2")
 library("shiny")
-library(plotly)
+library("plotly")
 library("maps")
 library("mapproj")
 library("RColorBrewer")

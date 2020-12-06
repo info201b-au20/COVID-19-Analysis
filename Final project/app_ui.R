@@ -1,8 +1,6 @@
-# ui.R
-library(shiny)
-library(plotly)
-library(tidyverse)
-library(dplyr)
+library("shiny")
+library("plotly")
+library("tidyverse")
 library("maps")
 library("mapproj")
 library("RColorBrewer")
