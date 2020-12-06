@@ -9,42 +9,40 @@ library("mapproj")
 library("RColorBrewer")
 library("leaflet") 
 
-raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
-data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
-data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
-###############################################################################
-# Page one variables
-
-
-
-###############################################################################
-# Page two variables
-data2$date <- as.Date(data2$date)
-
-
 server <- function(input, output) {
-  # Introduction
-  # Page one
+##### Page one ################################################################
   source("Aggregate_Table_Script.R")
-  national_statistics$date <-  as.Date(as.character.Date(national_statistics$date), "%Y%m%d")
+  choose_1 <- list("National total cases" = "national_total_cases",
+                   "National total deaths" = "national_total_deaths",
+                   "National current hospitalized" = 
+                     "national_current_hospitalized",
+                   "National new cases" = "national_new_cases",
+                   "National new Deaths" = "national_new_deaths",
+                   "National new Hospitalized" = "national_new_hospitalized")
+  national_statistics$date <- as.Date(as.character.Date(national_statistics$date), "%Y%m%d")
   
     output$scatter1 <- renderPlotly({
       plot_national_COVID <- ggplot(data = national_statistics) +
         geom_point(
-          mapping = aes_string(x = national_statistics$date, y = input$y_input),
+          mapping = aes_string(x = national_statistics$date, 
+                               y = choose_1[[input$y_input]]),
           color = input$color_input,
           size = input$size_input
         ) +
-        geom_line(mapping = aes_string(x = national_statistics$date, y = input$y_input)) +
+        geom_line(mapping = aes_string(x = national_statistics$date, 
+                                       y = choose_1[[input$y_input]])) +
         ggtitle("Trend Over Time") +
-        xlab("Date")
+        xlab("Date") + ylab(input$y_input)
       ggplotly(plot_national_COVID)
     })
   
   
   
-  # Page two
+#### Page two #################################################################
   output$scatter2 <- renderPlotly({
+    raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
+    data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
+    data2$date <- as.Date(data2$date)
     policy_per_month2 <- data2 %>% 
       filter(state_id == input$state2) %>% 
       mutate(month = format(date, "%m")) %>% 
@@ -58,23 +56,24 @@ server <- function(input, output) {
              "Published Policies Per Month Chart")
     ggplotly(plot_policy_2)
   })
-  
+
   output$scatter_cases2 <- renderPlotly({
-    type <- c("positive", "totalTestResults", "hospitalized currently", 
-              "recovered", "death")
-    types <- c("positive", "totalTestResults", "hospitalizedCurrently", 
-              "recovered", "death")
+    data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
+    name <- list("Positive case" = "positive", 
+                 "Total Test Result" = "totalTestResults", 
+                 "Hospitalized currently" = "hospitalizedCurrently", 
+                 "Recovered case" = "recovered", "Death case" = "death")
     data_cases_state_2 <- data_cases2 %>% 
       filter(state == input$state2)
     plot_cases2 <- ggplot(data_cases_state_2) +
       geom_point(
-        mapping = aes_string(x = data_cases_state_2$date, y = types[input$cases])
+        mapping = aes_string(x = "date", y = name[[input$cases]])
       ) +
       labs(x = "Date", y = "Cases", title = "COVID-19 Cases")
     ggplotly(plot_cases2)
   })
 
-######## Page three ##################################################
+######## Page three ###########################################################
 ### data ############
 source("Summary_Information_Script.R")
 
@@ -92,11 +91,6 @@ m_data$state[is.na(case_death_data$state)] <- "district of columbia"
 m_data <- drop_na(m_data)
 m_data <- mutate(m_data, names = tolower(state))
 
-
-states_data <- map_data("state") %>%
-  rename(state = region) %>%
-  left_join(m_data, by="state")
-
 mapStates = map("state", fill = TRUE, plot = FALSE)
 mapStates$names[60] <-  "washington"
 mapStates$names[21] <- "massachusetts"
@@ -108,7 +102,7 @@ mapStates$names[24] <- "michigan"
 mapStates$case_ratio <- m_data$case_ratio[match(mapStates$names, m_data$names)]
 mapStates$death_ratio <- m_data$death_ratio[match(mapStates$names, m_data$names)]
 
-################# create map #############################
+################# create map ##################################################
 
 output$map_id <- renderLeaflet({
   bins <- c(0, 0.001, 0.01, 0.1, 1)
@@ -133,10 +127,5 @@ output$map_id <- renderLeaflet({
         bringToFront = TRUE),
       label = labels
     )
-})
-
-##########################################################
-
-  # Summary
-
+  })
 }

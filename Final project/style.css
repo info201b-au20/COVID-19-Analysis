@@ -1,0 +1,22 @@
+body{
+  background-color: #F0F8FF;
+}
+h1{
+  font-family: Sans-Serif;
+  font-weight:bold;
+  border-radius: 10;
+}
+img{
+  width: 60%;
+  margin-bottom: 10px;
+}
+h4{
+  color: #6495ED;
+}
+h2{
+  color: black;
+}
+p{
+  color: black;
+  font-size: 16px;
+}

@@ -8,21 +8,41 @@ library("mapproj")
 library("RColorBrewer")
 library("leaflet") 
 
-raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
-data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
-data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
-type <- c("positive", "totalTestResults", "hospitalized currently", 
-          "recovered", "death")
 ###############################################################################
 # Introduction
+first_p <- tags$p("Due the huge impacts of COVID-19, many people in the United 
+                  States has been through a lot of changes and difficulties.
+                  Every time talking to our friends, Keep safe has been the 
+                  best wishes. Our group decided to analysis date about 
+                  COVID-19. Our data comes from the following two websites:")
+second_p <- tags$p("In order to combine two data sets and get more  
+                   understanding of COVID-19 conditions. We set three major 
+                   questions for this project:")
+ul <- tags$ul(
+  tags$li("What is the U.S. COVID-19 trend in time series?"),
+  tags$li("Did the policy work to reduce the seriousness of COVID-19?"),
+  tags$li("How serious is the COVID-19 condition in each state?")
+)
+
 intro <- tabPanel(
-  "intro"
+  title = tags$h4("Introduction"),
+  tags$header(h1("COVID-19 Project Introduction")),
+  tags$img(src = "https://iforum-sg.c.huawei.com/dddd/images/2020/3/21/38ae040f-6684-4eb4-9724-a34dae9bd80b.png?imageId=84891"),
+  first_p,
+  tags$p(tags$a(href="https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/us_states_covid19_daily.csv",
+                          "Daily state data set")),
+  tags$p(tags$a(href="https://github.com/info201b-au20/COVID-19-Analysis/blob/gh-pages/dataset/state_policy_updates_20201018_1346.csv",
+                           "State policy data")),
+  second_p,
+  ul
+  
 )
 ###############################################################################
 # Interactive page one
 source("Aggregate_Table_Script.R")
-colnames1 <- colnames(national_statistics)
-select_columns <- colnames1[colnames1 != "date"]
+select_columns <- c("National total cases", "National total deaths",
+                    "National current hospitalized", "National new cases",
+                    "National new Deaths", "National new Hospitalized")
 
 y_input_1 <- selectInput(
   inputId = "y_input",
@@ -55,8 +75,8 @@ scatter_sidepanel_1 <- sidebarPanel(
 )
 
 page_one <- tabPanel(
-  title = "National COVID-19",
-  titlePanel("National COVID-19 Trend"),
+  title = tags$h4("National COVID-19"),
+  tags$header(h1("National COVID-19 Trend")),
   sidebarLayout(
     scatter_sidepanel_1,
     scatter_main_1
@@ -64,16 +84,24 @@ page_one <- tabPanel(
 )
 ###############################################################################
 # Interactive page two
+raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
+data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
+data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
+type <- c("Positive case", "Total Test Result", "Hospitalized currently", 
+          "Recovered case", "Death case")
+
 scatter_sidebar_2 <- sidebarPanel(
   selectInput(
     inputId = "state2",
     label = "Choose a State",
-    choices = data2$state_id
+    choices = data2$state_id,
+    selected = data2$state_id[3]
   ),
   selectInput(
     inputId = "cases",
     label = "Choose a Data Type",
-    choices = type
+    choices = type,
+    selected = type[1]
   )
 )
 
@@ -83,8 +111,8 @@ scatter_main_2 <- mainPanel(
 )
 
 page_two <- tabPanel(
-  title = "Policy",
-  titlePanel("Policy and Cases"),
+  title = tags$h4("Policy"),
+  tags$header(h1("Policy and Cases")),
   sidebarLayout(
     scatter_sidebar_2,
     scatter_main_2
@@ -93,7 +121,8 @@ page_two <- tabPanel(
 ###############################################################################
 # Interactive page three ###
 page_three <- tabPanel(
-  title = "MAP",
+  title = tags$h4("MAP"),
+  tags$header(h1("State Condition")),
   sidebarLayout(
     sidebarPanel(
       p("You can choose the ratio you want to look at, the ratio is calculated 
@@ -106,20 +135,44 @@ page_three <- tabPanel(
       )
     ),
     mainPanel(
-      h2("MAP"),
+      tags$h1("MAP"),
       leafletOutput("map_id"),
     )
   )
 )
-
+###############################################################################
 # Summary
+p1 <- tags$p("The first COVID-19 case in United States is around April, and 
+             reach the peak in July. Until October, the national COVID-19 trend
+             seems keep increasing. To brought from the National COVID-19 page,
+             this disease is really drangerous because the data of new cases or
+             deaths never reduce to zero since the first case was found.")
+p2 <- tags$p("In the plot of policies number each month, each states publish 
+             policies related to COVID-19 in order to control the condition. 
+             But, each state's cases still increasing.  Thus, those policies 
+             that try to reduce COVID-19 cases does not work.")
+p3 <- tags$p("In the map of each state COVID-19 condition, the darker color 
+             means the more serious stuation. There are patterns we can see 
+             on the map: the states that have a high death ratio are close 
+             to the coast such as NJ, MA, PA; the states that have a high 
+             case ratio are generally in the middle of the US such as SD, 
+             IA, TX.")
+com <- tags$ul(
+  tags$li(p1),
+  tags$li(p2),
+  tags$li(p3)
+)
+
 last <- tabPanel(
-  "summary"
+  title = tags$h4("Summary"),
+  tags$header(h1("Conclusion")),
+  com
 )
 
 ui <- navbarPage(
   includeCSS("style.css"),
-  title = "COVID-19",
+  title = tags$h2("COVID-19"),
+  selected = tags$h4("Introduction"),
   intro,
   page_one,
   page_two,
