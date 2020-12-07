@@ -118,6 +118,8 @@ page_one <- tabPanel(
 # Interactive page two
 raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
 data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
+state <- distinct(data2, state_id)
+state <- state[[1]]
 data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
 type <- c(
   "Positive case", "Total Test Result", "Hospitalized currently",
@@ -128,8 +130,8 @@ scatter_sidebar_2 <- sidebarPanel(
   selectInput(
     inputId = "state2",
     label = "Choose a State",
-    choices = data2$state_id,
-    selected = data2$state_id[3]
+    choices = state,
+    selected = state[1]
   ),
   selectInput(
     inputId = "cases",
