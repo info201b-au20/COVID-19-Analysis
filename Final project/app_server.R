@@ -23,8 +23,8 @@ server <- function(input, output) {
     "National current hospitalized" =
       "national_current_hospitalized",
     "National new cases" = "national_new_cases",
-    "National new deaths" = "national_new_deaths",
-    "National new hospitalized" = "national_new_hospitalized"
+    "National new Deaths" = "national_new_deaths",
+    "National new Hospitalized" = "national_new_hospitalized"
   )
   
   # Change the date format to year/month/day
