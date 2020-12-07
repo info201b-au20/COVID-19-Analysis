@@ -97,23 +97,25 @@ server <- function(input, output) {
   })
 
   ######## Page three #########################################################
-  ### data ############
+  ### load data ############
   source("Summary_Information_Script.R")
-
   case_ratio <- state_positive_totalResults
   death_ratio <- state_death_totalResults
-
+  
+  ### combine data ###
   case_death_data <- case_ratio %>%
     rename("case_ratio" = positive_ratio) %>%
     left_join(death_ratio, by = "state") %>%
     rename("death_ratio" = death_ratio)
-
+  
+  ### change state abbreviation to full name in lower case
   m_data <- case_death_data
   m_data$state <- state.name[match(case_death_data$state, state.abb)]
   m_data$state[is.na(case_death_data$state)] <- "district of columbia"
   m_data <- drop_na(m_data)
   m_data <- mutate(m_data, names = tolower(state))
-
+  
+  ### create map geography and fill out null places ###
   map_states <- map("state", fill = TRUE, plot = FALSE)
   map_states$names[60] <- "washington"
   map_states$names[21] <- "massachusetts"

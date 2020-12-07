@@ -154,6 +154,8 @@ page_two <- tabPanel(
 )
 ###############################################################################
 # Interactive page three ###
+
+### create panel for map ###
 page_three <- tabPanel(
   title = tags$h4("MAP"),
   tags$header(h1("State Condition")),
