@@ -126,13 +126,16 @@ type <- c(
   "Recovered case", "Death case"
 )
 
+# create sidebar choices
 scatter_sidebar_2 <- sidebarPanel(
+  # choose a state
   selectInput(
     inputId = "state2",
     label = "Choose a State",
     choices = state,
     selected = state[1]
   ),
+  # choose a data type
   selectInput(
     inputId = "cases",
     label = "Choose a Data Type",
@@ -141,6 +144,7 @@ scatter_sidebar_2 <- sidebarPanel(
   )
 )
 
+# two graphs
 scatter_main_2 <- mainPanel(
   plotlyOutput("scatter2"),
   plotlyOutput("scatter_cases2")

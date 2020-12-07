@@ -62,11 +62,14 @@ server <- function(input, output) {
     raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
     data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
     data2$date <- as.Date(data2$date)
+    # How mach policies published each month?
     policy_per_month2 <- data2 %>%
       filter(state_id == input$state2) %>%
       mutate(month = format(date, "%m")) %>%
       group_by(month) %>%
       summarize(total = n())
+    
+    # Create graph "Published policies per month" chart
     plot_policy_2 <- ggplot(policy_per_month2) +
       geom_point(
         mapping = aes(x = month, y = total)
@@ -77,7 +80,8 @@ server <- function(input, output) {
       )
     ggplotly(plot_policy_2)
   })
-
+  
+  # Create graph "COVID-19 Cases"
   output$scatter_cases2 <- renderPlotly({
     data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
     name <- list(
