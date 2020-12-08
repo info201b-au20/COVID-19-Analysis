@@ -118,8 +118,6 @@ page_one <- tabPanel(
 # Interactive page two
 raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
 data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
-data2 <- data2 %>%
-  rename("state_id" = ï..state_id)
 state <- distinct(data2, state_id)
 state <- state[[1]]
 data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
@@ -181,6 +179,12 @@ page_three <- tabPanel(
     mainPanel(
       tags$h1("MAP"),
       leafletOutput("map_id"),
+      p("In the map, the darker the color, the higher the ratio.
+         The states that have a high death ratio are 
+         close to the coast such as NJ, MA, PA. 
+         The states that have a high case ratio are generally 
+         in the middle of the US such as SD, IA, TX. It could be that coast 
+         enviroment benefits the spread of virus")
     )
   )
 )
