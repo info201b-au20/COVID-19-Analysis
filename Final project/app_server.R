@@ -10,7 +10,6 @@ library("RColorBrewer")
 library("leaflet")
 
 # Create a server for the Shiny app
-
 server <- function(input, output) {
   ##### Page one ##############################################################
   source("Aggregate_Table_Script.R")
@@ -101,61 +100,61 @@ server <- function(input, output) {
   })
 
   ######## Page three #########################################################
-  ### load data ############
-  source("Summary_Information_Script.R")
-  case_ratio <- state_positive_totalResults
-  death_ratio <- state_death_totalResults
-  
-  ### combine data ###
-  case_death_data <- case_ratio %>%
-    rename("case_ratio" = positive_ratio) %>%
-    left_join(death_ratio, by = "state") %>%
-    rename("death_ratio" = death_ratio)
-  
-  ### change state abbreviation to full name in lower case
-  m_data <- case_death_data
-  m_data$state <- state.name[match(case_death_data$state, state.abb)]
-  m_data$state[is.na(case_death_data$state)] <- "district of columbia"
-  m_data <- drop_na(m_data)
-  m_data <- mutate(m_data, names = tolower(state))
-  
-  ### create map geography and fill out null places ###
-  map_states <- map("state", fill = TRUE, plot = FALSE)
-  mapStates$names[56] <-  "washington"
-  mapStates$names[57] <-  "washington"
-  mapStates$names[58] <-  "washington"
-  mapStates$names[59] <-  "washington"
-  mapStates$names[60] <-  "washington"
-  mapStates$names[20] <- "massachusetts"
-  mapStates$names[21] <- "massachusetts"
-  mapStates$names[22] <- "massachusetts"
-  mapStates$names[21] <- "massachusetts"
-  mapStates$names[34] <- "new york"
-  mapStates$names[35] <- "new york"
-  mapStates$names[36] <- "new york"
-  mapStates$names[37] <- "new york"
-  mapStates$names[38] <- "north carolina"
-  mapStates$names[39] <- "north carolina"
-  mapStates$names[40] <- "north carolina"
-  mapStates$names[23] <- "michigan"
-  mapStates$names[24] <- "michigan"
-  mapStates$names[53] <- "virginia"
-  mapStates$names[54] <- "virginia"
-  mapStates$names[55] <- "virginia"
-  map_states$case_ratio <- m_data$case_ratio[match(
-    map_states$names,
-    m_data$names
-  )]
-  map_states$death_ratio <- m_data$death_ratio[match(
-    map_states$names,
-    m_data$names
-  )]
-  mapStates$case_ratio[8] <- 0.040009550
-  mapStates$death_ratio[8] <- 0.0016371121
 
   ################# create map ################################################
 
   output$map_id <- renderLeaflet({
+    source("Summary_Information_Script.R")
+    case_ratio <- state_positive_totalResults
+    death_ratio <- state_death_totalResults
+    
+    ### combine data ###
+    case_death_data <- case_ratio %>%
+      rename("case_ratio" = positive_ratio) %>%
+      left_join(death_ratio, by = "state") %>%
+      rename("death_ratio" = death_ratio)
+    
+    ### change state abbreviation to full name in lower case
+    m_data <- case_death_data
+    m_data$state <- state.name[match(case_death_data$state, state.abb)]
+    m_data$state[is.na(case_death_data$state)] <- "district of columbia"
+    m_data <- drop_na(m_data)
+    m_data <- mutate(m_data, names = tolower(state))
+    
+    ### create map geography and fill out null places ###
+    map_states <- map("state", fill = TRUE, plot = FALSE)
+    mapStates$names[56] <-  "washington"
+    mapStates$names[57] <-  "washington"
+    mapStates$names[58] <-  "washington"
+    mapStates$names[59] <-  "washington"
+    mapStates$names[60] <-  "washington"
+    mapStates$names[20] <- "massachusetts"
+    mapStates$names[21] <- "massachusetts"
+    mapStates$names[22] <- "massachusetts"
+    mapStates$names[21] <- "massachusetts"
+    mapStates$names[34] <- "new york"
+    mapStates$names[35] <- "new york"
+    mapStates$names[36] <- "new york"
+    mapStates$names[37] <- "new york"
+    mapStates$names[38] <- "north carolina"
+    mapStates$names[39] <- "north carolina"
+    mapStates$names[40] <- "north carolina"
+    mapStates$names[23] <- "michigan"
+    mapStates$names[24] <- "michigan"
+    mapStates$names[53] <- "virginia"
+    mapStates$names[54] <- "virginia"
+    mapStates$names[55] <- "virginia"
+    map_states$case_ratio <- m_data$case_ratio[match(
+      map_states$names,
+      m_data$names
+    )]
+    map_states$death_ratio <- m_data$death_ratio[match(
+      map_states$names,
+      m_data$names
+    )]
+    mapStates$case_ratio[8] <- 0.040009550
+    mapStates$death_ratio[8] <- 0.0016371121
+    
     max = max(m_data[[input$ratio_id]])
     bins <- c(0, max/8, max/6, max/4, max/2, 1)
     pal <- colorBin("YlOrRd", domain = m_data[[input$ratio_id]], bins = bins)
