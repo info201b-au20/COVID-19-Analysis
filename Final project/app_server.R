@@ -13,27 +13,27 @@ library("leaflet")
 server <- function(input, output) {
   ##### Page one ##############################################################
   source("Aggregate_Table_Script.R")
-  
+
   # List the different choices
-  
+
   choose_1 <- list(
     "National total cases" = "national_total_cases",
     "National total deaths" = "national_total_deaths",
     "National current hospitalized" =
       "national_current_hospitalized",
     "National new cases" = "national_new_cases",
-    "National new Deaths" = "national_new_deaths",
-    "National new Hospitalized" = "national_new_hospitalized"
+    "National new deaths" = "national_new_deaths",
+    "National new hospitalized" = "national_new_hospitalized"
   )
-  
+
   # Change the date format to year/month/day
-  
+
   national_statistics$date <- as.Date(as.character.Date(
     national_statistics$date
   ), "%Y%m%d")
 
   # Create the first scatter plot
-  
+
   output$scatter1 <- renderPlotly({
     plot_national_covid <- ggplot(data = national_statistics) +
       geom_point(
@@ -59,6 +59,11 @@ server <- function(input, output) {
   #### Page two ###############################################################
   output$scatter2 <- renderPlotly({
     raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
+    if ("ï..state_id" %in% colnames(raw_data2)) {
+      raw_data2 <- raw_data2 %>%
+        rename(state_id = "ï..state_id")
+    }
+
     data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
     data2$date <- as.Date(data2$date)
     # How mach policies published each month?
@@ -67,7 +72,7 @@ server <- function(input, output) {
       mutate(month = format(date, "%m")) %>%
       group_by(month) %>%
       summarize(total = n())
-    
+
     # Create graph "Published policies per month" chart
     plot_policy_2 <- ggplot(policy_per_month2) +
       geom_point(
@@ -79,7 +84,7 @@ server <- function(input, output) {
       )
     ggplotly(plot_policy_2)
   })
-  
+
   # Create graph "COVID-19 Cases"
   output$scatter_cases2 <- renderPlotly({
     data_cases2 <- read.csv(file = "us_states_covid19_daily.csv")
@@ -107,27 +112,27 @@ server <- function(input, output) {
     source("Summary_Information_Script.R")
     case_ratio <- state_positive_totalResults
     death_ratio <- state_death_totalResults
-    
+
     ### combine data ###
     case_death_data <- case_ratio %>%
       rename("case_ratio" = positive_ratio) %>%
       left_join(death_ratio, by = "state") %>%
       rename("death_ratio" = death_ratio)
-    
+
     ### change state abbreviation to full name in lower case
     m_data <- case_death_data
     m_data$state <- state.name[match(case_death_data$state, state.abb)]
     m_data$state[is.na(case_death_data$state)] <- "district of columbia"
     m_data <- drop_na(m_data)
     m_data <- mutate(m_data, names = tolower(state))
-    
+
     ### create map geography and fill out null places ###
     map_states <- map("state", fill = TRUE, plot = FALSE)
-    map_states$names[56] <-  "washington"
-    map_states$names[57] <-  "washington"
-    map_states$names[58] <-  "washington"
-    map_states$names[59] <-  "washington"
-    map_states$names[60] <-  "washington"
+    map_states$names[56] <- "washington"
+    map_states$names[57] <- "washington"
+    map_states$names[58] <- "washington"
+    map_states$names[59] <- "washington"
+    map_states$names[60] <- "washington"
     map_states$names[20] <- "massachusetts"
     map_states$names[21] <- "massachusetts"
     map_states$names[22] <- "massachusetts"
@@ -154,10 +159,11 @@ server <- function(input, output) {
     )]
     map_states$case_ratio[8] <- 0.040009550
     map_states$death_ratio[8] <- 0.0016371121
-    
-    max = max(map_states[[input$ratio_id]])
-    bins <- c(0, max/8, max/6, max/4, max/2, 1)
-    pal <- colorBin("YlOrRd", domain = map_states[[input$ratio_id]], bins = bins)
+
+    max <- max(map_states[[input$ratio_id]])
+    bins <- c(0, max / 8, max / 6, max / 4, max / 2, 1)
+    pal <- colorBin("YlOrRd", domain = map_states[[input$ratio_id]],
+                    bins = bins)
     labels <- sprintf(
       "<strong>%s</strong><br/>%g",
       map_states$names, map_states[[input$ratio_id]]
@@ -178,8 +184,11 @@ server <- function(input, output) {
           bringToFront = TRUE
         ),
         label = labels
-      ) %>% 
-      addLegend(pal = pal, values = map_states[[input$ratio_id]], opacity = 0.7, title = "Ratio",
-                position = "bottomright")
+      ) %>%
+      addLegend(
+        pal = pal, values = map_states[[input$ratio_id]], opacity = 0.7,
+        title = "Ratio",
+        position = "bottomright"
+      )
   })
 }

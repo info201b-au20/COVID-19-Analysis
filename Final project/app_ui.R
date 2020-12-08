@@ -63,7 +63,7 @@ source("Aggregate_Table_Script.R")
 select_columns <- c(
   "National total cases", "National total deaths",
   "National current hospitalized", "National new cases",
-  "National new Deaths", "National new Hospitalized"
+  "National new deaths", "National new hospitalized"
 )
 
 # Y input of the scatter plot
@@ -92,7 +92,16 @@ size_input_1 <- sliderInput(
 # Creates a main panel that will display the scatter plot
 
 scatter_main_1 <- mainPanel(
-  plotlyOutput("scatter1")
+  plotlyOutput("scatter1"),
+  p("A scatter plot is used to display the COVID-19 trend in the United States
+    "),
+  p("In the United States, the total COVID-19 cases and the total COVID-19
+    deaths continue to rise. There is a general decreasing trend in the people
+    who are hospitalized currently. For national new cases, new deaths,
+    and new hospitalized patients, there is no apparent trend. They have
+    been bouncing up and down.  However, there appears to be a slight
+    increase in the number of new cases and the number of newly
+    hospitalized patients.")
 )
 
 # Creates a sidebar panel to display the different y variable, color, and size
@@ -117,6 +126,10 @@ page_one <- tabPanel(
 ###############################################################################
 # Interactive page two
 raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
+if ("ï..state_id" %in% colnames(raw_data2)) {
+  raw_data2 <- raw_data2 %>%
+    rename(state_id = "ï..state_id")
+}
 data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
 state <- distinct(data2, state_id)
 state <- state[[1]]
@@ -147,7 +160,13 @@ scatter_sidebar_2 <- sidebarPanel(
 # two graphs
 scatter_main_2 <- mainPanel(
   plotlyOutput("scatter2"),
-  plotlyOutput("scatter_cases2")
+  plotlyOutput("scatter_cases2"),
+  p("The published policies per month chart shows how many policies in each
+    state were published in each month. The COVID-19 Cases chart shows the
+    number of five different type of cases in each state, which could help us
+    interpret the severity of the disease. By presenting the two graphs together
+    , we could see whether more policies will help reduce the cases, or the
+    policies didn't help with the situation at all.")
 )
 
 page_two <- tabPanel(
@@ -156,13 +175,7 @@ page_two <- tabPanel(
   sidebarLayout(
     scatter_sidebar_2,
     scatter_main_2
-  ),
-  p("The published policies per month chart shows how many policies in each 
-    state were published in each month. The COVID-19 Cases chart shows the 
-    number of five different type of cases in each state, which could help us 
-    interpret the severity of the disease. By presenting the two graphs together
-    , we could see whether more policies will help reduce the cases, or the 
-    policies didn't help with the situation at all.")
+  )
 )
 ###############################################################################
 # Interactive page three ###
@@ -186,10 +199,10 @@ page_three <- tabPanel(
       tags$h1("MAP"),
       leafletOutput("map_id"),
       p("In the map, the darker the color, the higher the ratio.
-         The states that have a high death ratio are 
-         close to the coast such as NJ, MA, PA. 
-         The states that have a high case ratio are generally 
-         in the middle of the US such as SD, IA, TX. It could be that coast 
+         The states that have a high death ratio are
+         close to the coast such as NJ, MA, PA.
+         The states that have a high case ratio are generally
+         in the middle of the US such as SD, IA, TX. It could be that coast
          enviroment benefits the spread of virus")
     )
   )
