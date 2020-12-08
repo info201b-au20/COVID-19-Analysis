@@ -123,27 +123,27 @@ server <- function(input, output) {
     
     ### create map geography and fill out null places ###
     map_states <- map("state", fill = TRUE, plot = FALSE)
-    mapStates$names[56] <-  "washington"
-    mapStates$names[57] <-  "washington"
-    mapStates$names[58] <-  "washington"
-    mapStates$names[59] <-  "washington"
-    mapStates$names[60] <-  "washington"
-    mapStates$names[20] <- "massachusetts"
-    mapStates$names[21] <- "massachusetts"
-    mapStates$names[22] <- "massachusetts"
-    mapStates$names[21] <- "massachusetts"
-    mapStates$names[34] <- "new york"
-    mapStates$names[35] <- "new york"
-    mapStates$names[36] <- "new york"
-    mapStates$names[37] <- "new york"
-    mapStates$names[38] <- "north carolina"
-    mapStates$names[39] <- "north carolina"
-    mapStates$names[40] <- "north carolina"
-    mapStates$names[23] <- "michigan"
-    mapStates$names[24] <- "michigan"
-    mapStates$names[53] <- "virginia"
-    mapStates$names[54] <- "virginia"
-    mapStates$names[55] <- "virginia"
+    map_states$names[56] <-  "washington"
+    map_states$names[57] <-  "washington"
+    map_states$names[58] <-  "washington"
+    map_states$names[59] <-  "washington"
+    map_states$names[60] <-  "washington"
+    map_states$names[20] <- "massachusetts"
+    map_states$names[21] <- "massachusetts"
+    map_states$names[22] <- "massachusetts"
+    map_states$names[21] <- "massachusetts"
+    map_states$names[34] <- "new york"
+    map_states$names[35] <- "new york"
+    map_states$names[36] <- "new york"
+    map_states$names[37] <- "new york"
+    map_states$names[38] <- "north carolina"
+    map_states$names[39] <- "north carolina"
+    map_states$names[40] <- "north carolina"
+    map_states$names[23] <- "michigan"
+    map_states$names[24] <- "michigan"
+    map_states$names[53] <- "virginia"
+    map_states$names[54] <- "virginia"
+    map_states$names[55] <- "virginia"
     map_states$case_ratio <- m_data$case_ratio[match(
       map_states$names,
       m_data$names
@@ -152,12 +152,12 @@ server <- function(input, output) {
       map_states$names,
       m_data$names
     )]
-    mapStates$case_ratio[8] <- 0.040009550
-    mapStates$death_ratio[8] <- 0.0016371121
+    map_states$case_ratio[8] <- 0.040009550
+    map_states$death_ratio[8] <- 0.0016371121
     
-    max = max(m_data[[input$ratio_id]])
+    max = max(map_states[[input$ratio_id]])
     bins <- c(0, max/8, max/6, max/4, max/2, 1)
-    pal <- colorBin("YlOrRd", domain = m_data[[input$ratio_id]], bins = bins)
+    pal <- colorBin("YlOrRd", domain = map_states[[input$ratio_id]], bins = bins)
     labels <- sprintf(
       "<strong>%s</strong><br/>%g",
       map_states$names, map_states[[input$ratio_id]]
@@ -179,7 +179,7 @@ server <- function(input, output) {
         ),
         label = labels
       ) %>% 
-      addLegend(pal = pal, values = mapStates[[input$ratio_id]], opacity = 0.7, title = "Ratio",
+      addLegend(pal = pal, values = map_states[[input$ratio_id]], opacity = 0.7, title = "Ratio",
                 position = "bottomright")
   })
 }
