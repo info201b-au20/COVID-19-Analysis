@@ -156,7 +156,13 @@ page_two <- tabPanel(
   sidebarLayout(
     scatter_sidebar_2,
     scatter_main_2
-  )
+  ),
+  p("The published policies per month chart shows how many policies in each 
+    state were published in each month. The COVID-19 Cases chart shows the 
+    number of five different type of cases in each state, which could help us 
+    interpret the severity of the disease. By presenting the two graphs together
+    , we could see whether more policies will help reduce the cases, or the 
+    policies didn't help with the situation at all.")
 )
 ###############################################################################
 # Interactive page three ###
