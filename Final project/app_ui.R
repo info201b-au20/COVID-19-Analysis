@@ -126,10 +126,7 @@ page_one <- tabPanel(
 ###############################################################################
 # Interactive page two
 raw_data2 <- read.csv(file = "state_policy_updates_20201018_1346.csv")
-if ("ï..state_id" %in% colnames(raw_data2)) {
-  raw_data2 <- raw_data2 %>%
-    rename(state_id = "ï..state_id")
-}
+
 data2 <- subset(raw_data2, raw_data2$date != "1899-12-30")
 state <- distinct(data2, state_id)
 state <- state[[1]]
